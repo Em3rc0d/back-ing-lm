@@ -1,0 +1,22 @@
+{
+    "name": "contact-api",
+    "version": "1.0.0",
+    "description": "API para gestionar contactos",
+    "main": "api/index.js",
+    "scripts": {
+        "start": "node api/index.js",
+        "dev": "nodemon api/index.js"
+    },
+    "dependencies": {
+        "contact-api": "file:",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "mongodb": "^4.13.1"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+    },
+    "engines": {
+        "node": ">=14.x"
+    }
+}

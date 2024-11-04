@@ -1,3 +1,4 @@
+require('dotenv').config(); // Cargar variables de entorno
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
 const app = express();
@@ -10,16 +11,21 @@ async function connectToDatabase() {
   if (cachedDb) {
     return cachedDb;
   }
-  const client = new MongoClient(process.env.MONGODB_URI, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    },
-  });
-  await client.connect();
-  cachedDb = client.db('contactLM');
-  return cachedDb;
+  try {
+    const client = new MongoClient(process.env.MONGODB_URI, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      },
+    });
+    await client.connect();
+    cachedDb = client.db('contactLM');
+    return cachedDb;
+  } catch (error) {
+    console.error('Error al conectar a la base de datos:', error);
+    throw new Error('Database connection error');
+  }
 }
 
 app.get('/api/contacts', async (req, res) => {
@@ -54,5 +60,14 @@ app.post('/api/contact', async (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
-})
+});
+
+const PORT = process.env.PORT || 3000;
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
+
 module.exports = app;
