@@ -1,9 +1,23 @@
 require('dotenv').config(); // Cargar variables de entorno
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
+const cors = require('cors'); // Importar CORS
 const app = express();
 
 app.use(express.json());
+
+const allowedOrigins = ['https://luis-merino.vercel.app', 'http://localhost:4200'];
+
+// Configuración de CORS para permitir solicitudes desde los dominios especificados
+app.use(cors({
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 let cachedDb = null;
 
@@ -28,6 +42,7 @@ async function connectToDatabase() {
   }
 }
 
+// Ruta para obtener los contactos
 app.get('/api/contacts', async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -40,6 +55,7 @@ app.get('/api/contacts', async (req, res) => {
   }
 });
 
+// Ruta para guardar un nuevo contacto
 app.post('/api/contact', async (req, res) => {
   const { name, email, phone, message } = req.body;
 
@@ -58,6 +74,7 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// Ruta raíz
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
